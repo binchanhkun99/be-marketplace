@@ -1,7 +1,7 @@
 module.exports = {
   HOST: "localhost",
-  USER: "root",
-  PASSWORD: "Hoangnam147*",
+  USER: "onewise_root",
+  PASSWORD: "vorJjfjTi8SGvhk8LSlg",
   DB: "socical",
   dialect: "mysql",
   pool: {
