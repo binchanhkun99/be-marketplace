@@ -9,6 +9,9 @@ module.exports = function (app) {
     );
     next();
   });
+
+   //Get User and Service
+   app.post("/api/user/getUS", controller.getUserAndService);
   //Get info user
   app.get("/api/user/getUser", [authJwt.verifyToken], controller.getInfo);
 
@@ -17,4 +20,5 @@ module.exports = function (app) {
 
   //Check user for payment
   app.post("/api/user/checkUser", controller.checkUser)
+ 
 };

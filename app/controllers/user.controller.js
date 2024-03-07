@@ -5,12 +5,40 @@ const nodemailer = require("nodemailer");
 const User = db.user;
 const urlApp = db.url_app;
 const Order = db.order_history
+const Service = db.Service
 
 
 const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+
+exports.getUserAndService = async (req, res) =>{
+  try {
+  const email = req.body.data[0].email
+  const nameService = req.body.data[0].id
+  const dataUser = await User.findOne({
+    where:{
+      email: email
+    }
+  })
+  const dataService = await Service.findOne({
+    where:{
+      name: nameService
+    }
+  })
+  const filteredResults = {
+    price: dataService.price,
+    nameExt: dataUser.type
+
+  }
+  
+  res.status(200).json({ success: true, filteredResults });
+  } catch (error) {
+    res.status(500).send({ success: false });
+  }
+  
+}
 
 exports.getInfo = async (req, res) => {
   try {
