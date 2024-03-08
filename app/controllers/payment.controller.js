@@ -54,7 +54,7 @@ const createOrder = async (data) => {
       {
         amount: {
           currency_code: "USD",
-          value: Price,
+          value: "1",
         },
       },
     ],
