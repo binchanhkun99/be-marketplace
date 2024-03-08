@@ -6,8 +6,8 @@ const ServiceForUser = db.ServiceForUser;
 const moment = require("moment");
 const sequelize = db.sequelize;
 
-// const base = "https://api-m.paypal.com"; //Product
-const base = "https://api-m.sandbox.paypal.com"; //Sandbox
+const base = "https://api-m.paypal.com"; //Product
+// const base = "https://api-m.sandbox.paypal.com"; //Sandbox
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
 
 // Generate AccessToken Auth Paypal
@@ -246,8 +246,6 @@ exports.checkService = async (req, res) => {
 
     // Kiểm tra nếu gói dịch vụ đã hết hạn
     if (moment().isAfter(results[0].expiry_date)) {
-      console.log("Hết hạn gòi..............");
-
       // Cập nhật lại expiry_date, name_service, và service_id
       await ServiceForUser.update(
         {
