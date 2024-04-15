@@ -146,11 +146,10 @@ exports.registerUser = async (req, res) => {
 
     // Tạo người dùng mới trong cơ sở dữ liệu
     const newUser = await User.create({
-      email,
-     
+      email,     
       password: hashedPassword,
       maGioiThieu: maGioiThieu || null,
-      app_name: app_name
+      app_name: app_name || null
     });
 
     // Trả về thông tin của người dùng mới đã đăng ký
