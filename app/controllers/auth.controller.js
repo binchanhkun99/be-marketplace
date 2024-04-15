@@ -73,9 +73,9 @@ exports.signin = async (req, res) => {
 // };
 
 exports.signinUser = (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!email && !username) {
+  if (!email && !password) {
     return res.status(400).send({ message: "Email or username is required." });
   }
 
@@ -85,9 +85,6 @@ exports.signinUser = (req, res) => {
     whereCondition.email = email;
   }
 
-  if (username) {
-    whereCondition.username = username;
-  }
   if(!password){
     return res.status(401).send({
       success: false,
@@ -121,7 +118,6 @@ exports.signinUser = (req, res) => {
         success: true,
         id: user.id,
         email: user.email,
-        username: user.username,
         app_name: user.app_name,
         accessToken: token,
       });
@@ -131,7 +127,7 @@ exports.signinUser = (req, res) => {
     });
 };
 exports.registerUser = async (req, res) => {
-  const { email, username, password, app_name } = req.body;
+  const { email, password, app_name } = req.body;
 
   // Kiểm tra xem email và mật khẩu có được cung cấp không
   if (!email || !password) {
@@ -151,8 +147,8 @@ exports.registerUser = async (req, res) => {
     // Tạo người dùng mới trong cơ sở dữ liệu
     const newUser = await User.create({
       email,
-      username,
-      password: hashedPassword, // Sử dụng mật khẩu đã mã hóa
+     
+      password: hashedPassword,
       maGioiThieu: maGioiThieu || null,
       app_name: app_name
     });
@@ -164,7 +160,7 @@ exports.registerUser = async (req, res) => {
       data: {
         id: newUser.id,
         email: newUser.email,
-        username: newUser.username,
+       
       },
     });
   } catch (error) {
