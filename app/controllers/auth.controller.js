@@ -1,7 +1,7 @@
 const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
-const newUser = db.NewUsers
+const NewUser = db.NewUsers
 const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
@@ -93,7 +93,7 @@ exports.signinUser = (req, res) => {
     });
   }
 
-  newUser.findOne({
+  NewUser.findOne({
     where: whereCondition,
   })
     .then((user) => {
@@ -136,7 +136,7 @@ exports.registerUser = async (req, res) => {
 
   try {
     // Kiểm tra xem email đã được sử dụng trước đó chưa
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await NewUser.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).send({ message: "Email is already in use." });
     }
@@ -145,7 +145,7 @@ exports.registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Tạo người dùng mới trong cơ sở dữ liệu
-    const newUser = await newUser.create({
+    const newUser = await NewUser.create({
       email,     
       password: hashedPassword,
       maGioiThieu: maGioiThieu || null,
