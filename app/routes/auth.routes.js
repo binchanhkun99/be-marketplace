@@ -17,5 +17,7 @@ module.exports = function(app) {
   // );
 
   app.post("/api/auth/signin", controller.signin);
+  app.post("/api/auth/signin_user", controller.signinUser);
+  app.post("/api/auth/register", controller.registerUser);
   app.post("/api/auth/changePassword", [authJwt.verifyToken], controller.changePassword )
 };

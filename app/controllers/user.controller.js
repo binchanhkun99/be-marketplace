@@ -8,6 +8,7 @@ const Order = db.order_history
 const Service = db.Service
 
 
+
 const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
@@ -30,7 +31,6 @@ exports.getUserAndService = async (req, res) =>{
   const filteredResults = {
     price: dataService.price,
     nameExt: dataUser.type
-
   }
   
   res.status(200).json({ success: true, filteredResults });
@@ -38,7 +38,7 @@ exports.getUserAndService = async (req, res) =>{
     res.status(500).send({ success: false });
   }
   
-}
+}     
 
 exports.getInfo = async (req, res) => {
   try {
@@ -63,7 +63,6 @@ exports.getInfo = async (req, res) => {
       avatar: user.avatar,
       transferCode: user.transferCode,
       securityCode: user.securityCode,
-
       status: user.status,
       success: true,
     };

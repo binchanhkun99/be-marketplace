@@ -1,7 +1,7 @@
 const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
-
+const newUser = db.NewUsers
 const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
@@ -41,64 +41,137 @@ exports.signin = async (req, res) => {
   }
 };
 
-
-// exports.signin = (req, res) => {
-//   const { email, username, password } = req.body;
-
-//   if (!email && !username) {
-//     return res.status(400).send({ message: "Email or username is required." });
+// exports.signinUser = async (req, res) => {
+//   const user = await User.findOne({
+//     where: { email: req.body.email },
+//   });
+//   if(user){
+//     const { access_token, ...userData} = user.dataValues
+//     // delete userData.id;
+//     // delete userData.updatedAt;
+//     res.status(200).send({ success: true, data: userData });
 //   }
-
-//   let whereCondition = {};
-
-//   if (email) {
-//     whereCondition.email = email;
-//   }
-
-//   if (username) {
-//     whereCondition.username = username;
-//   }
-//   if(!password){
-//     return res.status(401).send({
-//       success: false,
-//       message: "Invalid Password!",
+//   else{
+//     const expiresIn = 3 * 365 * 24 * 60 * 60;
+//     var token = jwt.sign({ email: req.body.email }, config.secret, {
+//       expiresIn: expiresIn,
 //     });
-//   }
-
-//   User.findOne({
-//     where: whereCondition,
-//   })
-//     .then((user) => {
-//       if (!user) {
-//         return res.status(404).send({ message: "User Not found." });
-//       }
-  
-//       var passwordIsValid = bcrypt.compareSync(password, user.password)
-
-//       if (!passwordIsValid) {
-//         return res.status(401).send({
-//           accessToken: null,
-//           message: "Invalid Password!",
-//         });
-//       }
-
-//       var token = jwt.sign({ id: user.id }, config.secret, {
-//         expiresIn: 8640000,
-//       });
-
-//       res.status(200).send({
-//         success: true,
-//         id: user.id,
-//         email: user.email,
-//         username: user.username,
-//         accessToken: token,
-//       });
+//     // const emailVerifiedString = req.body.email_verified ? 'true' : 'false';
+//     User.create({
+//       email: req.body.email,
+//       password: req.body.password,
+//       app_name: req.body.app_name
 //     })
-//     .catch((err) => {
-//       res.status(500).send({ message: err.message });
-//     });
+//       .then((newUser) => {
+//         const {access_token, ...userData} = newUser.dataValues; // Lấy dữ liệu từ thuộc tính dataValues
+//         res.status(200).send({ success: true, data: userData });
+//       })
+//       .catch((err) => {
+//         res.status(500).send({ message: err.message });
+//       });
+//   }
 // };
 
+exports.signinUser = (req, res) => {
+  const { email, username, password } = req.body;
+
+  if (!email && !username) {
+    return res.status(400).send({ message: "Email or username is required." });
+  }
+
+  let whereCondition = {};
+
+  if (email) {
+    whereCondition.email = email;
+  }
+
+  if (username) {
+    whereCondition.username = username;
+  }
+  if(!password){
+    return res.status(401).send({
+      success: false,
+      message: "Invalid Password!",
+     
+    });
+  }
+
+  User.findOne({
+    where: whereCondition,
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+  
+      var passwordIsValid = bcrypt.compareSync(password, user.password)
+
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          accessToken: null,
+          message: "Invalid Password!",
+        });
+      }
+
+      var token = jwt.sign({ id: user.id }, config.secret, {
+        expiresIn: 8640000,
+      });
+
+      res.status(200).send({
+        success: true,
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        app_name: user.app_name,
+        accessToken: token,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+};
+exports.registerUser = async (req, res) => {
+  const { email, username, password, app_name } = req.body;
+
+  // Kiểm tra xem email và mật khẩu có được cung cấp không
+  if (!email || !password) {
+    return res.status(400).send({ message: "Email and password are required." });
+  }
+
+  try {
+    // Kiểm tra xem email đã được sử dụng trước đó chưa
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).send({ message: "Email is already in use." });
+    }
+
+    // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Tạo người dùng mới trong cơ sở dữ liệu
+    const newUser = await User.create({
+      email,
+      username,
+      password: hashedPassword, // Sử dụng mật khẩu đã mã hóa
+      maGioiThieu: maGioiThieu || null,
+      app_name: app_name
+    });
+
+    // Trả về thông tin của người dùng mới đã đăng ký
+    res.status(201).send({
+      success: true,
+      message: "User registered successfully.",
+      data: {
+        id: newUser.id,
+        email: newUser.email,
+        username: newUser.username,
+      },
+    });
+  } catch (error) {
+    // Xử lý bất kỳ lỗi nào xảy ra trong quá trình đăng ký
+    res.status(500).send({ message: error.message });
+  }
+};
 exports.changePassword = async (req, res) => {
   try {
     // Lấy id user thông qua token

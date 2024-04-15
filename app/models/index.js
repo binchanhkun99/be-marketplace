@@ -29,6 +29,7 @@ db.notify_global = require("../models/notify_global.model.js")(sequelize, Sequel
 db.assets = require("../models/assets.model.js")(sequelize, Sequelize)
 db.Service = require("../models/service.model.js")(sequelize, Sequelize)
 db.ServiceForUser = require("../models/service_for_user.model.js")(sequelize, Sequelize)
+db.NewUsers = require("../models/new_user.model.js")(sequelize, Sequelize)
 
 
 
