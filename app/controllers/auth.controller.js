@@ -127,7 +127,7 @@ exports.signinUser = (req, res) => {
     });
 };
 exports.registerUser = async (req, res) => {
-  const { email, password, app_name } = req.body;
+  const { email, password, app_name, maGioiThieu } = req.body;
 
   // Kiểm tra xem email và mật khẩu có được cung cấp không
   if (!email || !password) {
