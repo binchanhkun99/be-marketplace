@@ -93,7 +93,7 @@ exports.signinUser = (req, res) => {
     });
   }
 
-  User.findOne({
+  newUser.findOne({
     where: whereCondition,
   })
     .then((user) => {
@@ -118,7 +118,7 @@ exports.signinUser = (req, res) => {
         success: true,
         id: user.id,
         email: user.email,
-        app_name: user.app_name,
+        app_name: user.app_name || "|",
         accessToken: token,
       });
     })
@@ -145,7 +145,7 @@ exports.registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Tạo người dùng mới trong cơ sở dữ liệu
-    const newUser = await User.create({
+    const newUser = await newUser.create({
       email,     
       password: hashedPassword,
       maGioiThieu: maGioiThieu || null,
