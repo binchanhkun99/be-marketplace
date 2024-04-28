@@ -1,26 +1,23 @@
 module.exports = (sequelize, Sequelize) => {
-    const Service = sequelize.define("servicesex", {
+    const SerCus = sequelize.define("service_customers", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true, // Đặt trường id là khóa chính
         autoIncrement: true // Tự động tăng giá trị
       },
-      id_extension: {
+      id_users: {
+        type: Sequelize.INTEGER,
+      },
+      register_date: {
         type: Sequelize.STRING,
       },
-      name: {
+      expiration_date: {
         type: Sequelize.STRING,
       },
-      price: {
-        type: Sequelize.STRING,
-      },
-      description: {
-        type: Sequelize.STRING,
-      },
-      time: {
-        type: Sequelize.STRING,
-      },
+      id_service: {
+        type: Sequelize.INTEGER,
+      }
     });
     
-    return Service;
+    return SerCus;
   };

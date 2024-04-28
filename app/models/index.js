@@ -30,8 +30,12 @@ db.assets = require("../models/assets.model.js")(sequelize, Sequelize)
 db.Service = require("../models/service.model.js")(sequelize, Sequelize)
 db.ServiceForUser = require("../models/service_for_user.model.js")(sequelize, Sequelize)
 db.NewUsers = require("../models/new_user.model.js")(sequelize, Sequelize)
-
-
+db.Extensions =  require("../models/extensions.model.js")(sequelize, Sequelize)
+db.SerCus = require("../models/service_customers.model.js")(sequelize, Sequelize)
+db.Category = require("../models/category.model.js")(sequelize, Sequelize)
+db.Types = require("../models/types.model.js")(sequelize, Sequelize)
+db.PayHis = require("../models/pay_history.model.js")(sequelize, Sequelize)
+db.Browser = require("../models/browsers.model.js")(sequelize, Sequelize)
 
 // db.role.belongsToMany(db.user, {
 //   through: "user_roles",

@@ -34,7 +34,6 @@ const postData = async () => {
             .then((response) => response.text())
             .catch((error) => console.error(error));
     });
-    console.log("Test promise", promises);
     try {
         const responses = await Promise.all(promises);
         console.log(responses);
