@@ -7,19 +7,24 @@ const ServicesCustomers = db.SerCus;
 const Extensions = db.Extensions;
 const Service = db.Service;
 
-Extensions.belongsTo(Service, { foreignKey: 'id_extensions', as: 'category' });
-Service.belongsTo(ServicesCustomers, { foreignKey: 'id_services', as: 'services' });
+Extensions.belongsTo(Service, { foreignKey: "id_extensions", as: "category" });
+Service.belongsTo(ServicesCustomers, {
+  foreignKey: "id_services",
+  as: "services",
+});
 
 exports.signinExtensions = (req, res) => {
   const { email, password, app_name } = req.body;
 
   if (!email || !password) {
-    return res.status(400).send({ message: "Email and password are required." });
+    return res
+      .status(400)
+      .send({ message: "Email and password are required." });
   }
 
   NewUser.findOne({
     where: { email: email },
-    attributes: ['id', 'password']
+    attributes: ["id", "password"],
   })
     .then((user) => {
       if (!user) {
@@ -28,65 +33,81 @@ exports.signinExtensions = (req, res) => {
 
       const passwordIsValid = bcrypt.compareSync(password, user.password);
       if (!passwordIsValid) {
-        return res.status(401).send({ accessToken: null, message: "Invalid Password!" });
+        return res
+          .status(401)
+          .send({ accessToken: null, message: "Invalid Password!" });
       }
 
       // Tạo token
       const token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400 // Thời gian hết hạn của token (1 ngày)
+        expiresIn: 86400, // Thời gian hết hạn của token (1 ngày)
       });
 
-      // Tìm extension dựa trên app_name
       Extensions.findOne({
-        where: { app_name: app_name }
-      })
-        .then((extension) => {
-          if (!extension) {
-            return res.status(404).send({ message: "Extension not found." });
-          }
-
-          // Tìm dịch vụ của người dùng từ bảng services_customers
-          ServicesCustomers.findOne({
-            where: { id_user: user.id, id_service: extension.id },
-            include: [
-              {
-                model: Service,
-                attributes: ['name', 'description', 'price', 'time'],
-              }
-            ]
-          })
-            .then((serviceCustomer) => {
-              if (!serviceCustomer) {
-                return res.status(404).send({ message: "No service found for this user." });
-              }
-
-              // Gửi kết quả về client
-              res.status(200).send({
-                success: true,
-                id: user.id,
-                email: email,
-                app_name: app_name,
-                accessToken: token,
-                services: [{
-                  name: serviceCustomer.Service.name,
-                  description: serviceCustomer.Service.description,
-                  price: serviceCustomer.Service.price,
-                  time: serviceCustomer.Service.time,
-                }],
-                services_customers: {
-                  id_user: serviceCustomer.id_user,
-                  register_date: serviceCustomer.register_date,
-                  expiration_date: serviceCustomer.expiration_date
-                }
-              });
-            })
-            .catch((err) => {
-              res.status(500).send({ message: err.message });
-            });
+        where: { app_name: app_name },
+      }).then((extension) => {
+        if (!extension) {
+          return res.status(404).send({ message: "Extension not found." });
+        }
+        //lisst
+        Service.findAll({
+          where: {
+            id: extension.id,
+          },
+          attributes: ["id"],
         })
-        .catch((err) => {
-          res.status(500).send({ message: err.message });
-        });
+          .then((aryId) => {
+            ServicesCustomers.findOne({
+              where: {
+                id_user: user.id,
+                id_service: {
+                  [Op.in]: aryId,
+                },
+              },
+              include: [
+                {
+                  model: Service,
+                  attributes: ["name", "description", "price", "time"],
+                },
+              ],
+            })
+              .then((serviceCustomer) => {
+                if (!serviceCustomer) {
+                  return res
+                    .status(404)
+                    .send({ message: "No service found for this user." });
+                }
+
+                // Gửi kết quả về client
+                res.status(200).send({
+                  success: true,
+                  id: user.id,
+                  email: email,
+                  app_name: app_name,
+                  accessToken: token,
+                  services: [
+                    {
+                      name: serviceCustomer.Service.name,
+                      description: serviceCustomer.Service.description,
+                      price: serviceCustomer.Service.price,
+                      time: serviceCustomer.Service.time,
+                    },
+                  ],
+                  services_customers: {
+                    id_user: serviceCustomer.id_user,
+                    register_date: serviceCustomer.register_date,
+                    expiration_date: serviceCustomer.expiration_date,
+                  },
+                });
+              })
+              .catch((err) => {
+                res.status(500).send({ message: err.message });
+              });
+          })
+          .catch((err) => {
+            res.status(500).send({ message: err.message });
+          });
+      });
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
@@ -94,33 +115,34 @@ exports.signinExtensions = (req, res) => {
 };
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+const { where } = require("sequelize");
 
 exports.signin = async (req, res) => {
   const user = await User.findOne({
     where: { email: req.body.email },
   });
-  if(user){
-    const { id, updatedAt, email_verified, ...userData} = user.dataValues
+  if (user) {
+    const { id, updatedAt, email_verified, ...userData } = user.dataValues;
     // delete userData.id;
     // delete userData.updatedAt;
     res.status(200).send({ success: true, data: userData });
-  }
-  else{
+  } else {
     const expiresIn = 3 * 365 * 24 * 60 * 60;
     var token = jwt.sign({ email: req.body.email }, config.secret, {
       expiresIn: expiresIn,
     });
-    const emailVerifiedString = req.body.email_verified ? 'true' : 'false';
+    const emailVerifiedString = req.body.email_verified ? "true" : "false";
     User.create({
       email: req.body.email,
       sub: req.body.sub,
       email_verified: emailVerifiedString,
       access_token: token,
       picture: req.body.picture,
-      type: req.body.type
+      type: req.body.type,
     })
       .then((newUser) => {
-        const { id, updatedAt, email_verified, ...userData} = newUser.dataValues; // Lấy dữ liệu từ thuộc tính dataValues
+        const { id, updatedAt, email_verified, ...userData } =
+          newUser.dataValues; // Lấy dữ liệu từ thuộc tính dataValues
         res.status(200).send({ success: true, data: userData });
       })
       .catch((err) => {
@@ -173,11 +195,10 @@ exports.signinUser = (req, res) => {
     whereCondition.email = email;
   }
 
-  if(!password){
+  if (!password) {
     return res.status(401).send({
       success: false,
       message: "Invalid Password!",
-     
     });
   }
 
@@ -188,8 +209,8 @@ exports.signinUser = (req, res) => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }
-  
-      var passwordIsValid = bcrypt.compareSync(password, user.password)
+
+      var passwordIsValid = bcrypt.compareSync(password, user.password);
 
       if (!passwordIsValid) {
         return res.status(401).send({
@@ -219,7 +240,9 @@ exports.registerUser = async (req, res) => {
 
   // Kiểm tra xem email và mật khẩu có được cung cấp không
   if (!email || !password) {
-    return res.status(400).send({ message: "Email and password are required." });
+    return res
+      .status(400)
+      .send({ message: "Email and password are required." });
   }
 
   try {
@@ -234,10 +257,10 @@ exports.registerUser = async (req, res) => {
 
     // Tạo người dùng mới trong cơ sở dữ liệu
     const newUser = await NewUser.create({
-      email,     
+      email,
       password: hashedPassword,
       maGioiThieu: maGioiThieu || null,
-      app_name: app_name || null
+      app_name: app_name || null,
     });
 
     // Trả về thông tin của người dùng mới đã đăng ký
@@ -247,7 +270,6 @@ exports.registerUser = async (req, res) => {
       data: {
         id: newUser.id,
         email: newUser.email,
-       
       },
     });
   } catch (error) {
@@ -255,7 +277,6 @@ exports.registerUser = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 };
-
 
 exports.changePassword = async (req, res) => {
   try {
