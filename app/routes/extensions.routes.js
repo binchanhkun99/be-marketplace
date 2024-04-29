@@ -8,6 +8,6 @@ module.exports = function(app) {
       next();
     });
 
-    app.get("/api/getExtensions", controller.listing);
+    app.get("/api/extensions", controller.listing);
 
 }
