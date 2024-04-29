@@ -43,6 +43,7 @@ require("./app/routes/assets.router")(app)
 require("./app/routes/notify.routes")(app)
 require("./app/routes/payment.router")(app)
 require("./app/routes/service.router")(app)
+require("./app/routes/extensions.routes")(app)
 // set port, listen for requests
 const PORT = 2201;
 app.listen(PORT, () => {
