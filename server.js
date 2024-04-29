@@ -45,7 +45,7 @@ require("./app/routes/payment.router")(app)
 require("./app/routes/service.router")(app)
 require("./app/routes/extensions.routes")(app)
 // set port, listen for requests
-const PORT = 2201;
+const PORT = 2053;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
