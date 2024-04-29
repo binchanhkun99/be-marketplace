@@ -47,7 +47,13 @@ exports.signinExtensions = (req, res) => {
         where: { app_name: app_name },
       }).then((extension) => {
         if (!extension) {
-          return res.status(404).send({ message: "Extension not found." });
+          return res.status(200).send({ 
+            user_id: user.id,
+            email: user.email,
+            accessToken: token,
+            service: null,
+            services_customers: null, 
+            message: "Extension not found." });
         }
         //lisst
         Service.findAll({
@@ -57,6 +63,8 @@ exports.signinExtensions = (req, res) => {
           attributes: ["id"],
         })
           .then((aryId) => {
+
+
             ServicesCustomers.findOne({
               where: {
                 id_user: user.id,
@@ -91,13 +99,13 @@ exports.signinExtensions = (req, res) => {
                       description: serviceCustomer.Service.description,
                       price: serviceCustomer.Service.price,
                       time: serviceCustomer.Service.time,
-                    },
+                    }
                   ],
                   services_customers: {
                     id_user: serviceCustomer.id_user,
                     register_date: serviceCustomer.register_date,
                     expiration_date: serviceCustomer.expiration_date,
-                  },
+                  }
                 });
               })
               .catch((err) => {
