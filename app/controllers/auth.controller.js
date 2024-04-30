@@ -24,7 +24,7 @@ exports.signinExtensions = (req, res) => {
 
   NewUser.findOne({
     where: { email: email },
-    attributes: ["id", "password"],
+    attributes: ["id", "password", "email"],
   })
     .then((user) => {
       if (!user) {
