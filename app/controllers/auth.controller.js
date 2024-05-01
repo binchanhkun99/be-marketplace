@@ -95,6 +95,9 @@ exports.signinExtensions = (req, res) => {
                   createdAt: user.createAt,
                   app_name: app_name,
                   accessToken: token,
+                  id_browser: extension.id_browser,
+                  id_type: extension.id_type,
+                  id_category: extension.id_category,
                   services: [
                     {
                       name: serviceCustomer.Service.name,
