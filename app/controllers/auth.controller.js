@@ -7,8 +7,8 @@ const ServicesCustomers = db.SerCus;
 const Extensions = db.Extensions;
 const Service = db.Service;
 
-Extensions.belongsTo(Service, { foreignKey: "id_extensions", as: "category" });
-Service.belongsTo(ServicesCustomers, {
+Service.belongsTo( Extensions, { foreignKey: "id_extensions", as: "extensions" });
+ServicesCustomers.belongsTo(Service, {
   foreignKey: "id_services",
   as: "services",
 });
