@@ -45,6 +45,7 @@ exports.signinExtensions = (req, res) => {
 
       Extensions.findOne({
         where: { app_name: app_name },
+        attributes: ["id", "id_browser", "id_type", "id_category"],
       }).then((extension) => {
         if (!extension) {
           return res.status(200).send({ 
