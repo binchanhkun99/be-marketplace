@@ -24,7 +24,7 @@ exports.signinExtensions = (req, res) => {
 
   NewUser.findOne({
     where: { email: email },
-    attributes: ["id", "password", "email"],
+    attributes: ["id", "password", "email", "createAt"],
   })
     .then((user) => {
       if (!user) {
@@ -53,6 +53,7 @@ exports.signinExtensions = (req, res) => {
             accessToken: token,
             service: null,
             services_customers: null, 
+            createAt: user.createAt,
             message: "Extension not found." });
         }
         //lisst
@@ -91,6 +92,7 @@ exports.signinExtensions = (req, res) => {
                   success: true,
                   id: user.id,
                   email: email,
+                  createAt: user.createAt,
                   app_name: app_name,
                   accessToken: token,
                   services: [
