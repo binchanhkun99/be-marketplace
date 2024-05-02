@@ -48,6 +48,8 @@ db.Browser = require("../models/browsers.model.js")(sequelize, Sequelize)
 //   otherKey: "roleId"
 // });
 
+db.Service.belongsTo(db.Extensions, { foreignKey: 'id_extension', as: 'id_est' });
+db.SerCus.belongsTo(db.Service, { foreignKey: 'id_service', as: 'id_servi' });
 
 
 module.exports = db;

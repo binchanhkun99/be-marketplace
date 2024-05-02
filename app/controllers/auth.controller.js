@@ -7,7 +7,7 @@ const ServicesCustomers = db.SerCus;
 const Extensions = db.Extensions;
 const Service = db.Service;
 
-Service.belongsTo( Extensions, { foreignKey: "id_extensions", as: "extensions" });
+Service.belongsTo(Extensions, { foreignKey: "id_extension", as: "extensions" });
 ServicesCustomers.belongsTo(Service, {
   foreignKey: "id_service",
   as: "services",
@@ -48,37 +48,41 @@ exports.signinExtensions = (req, res) => {
         attributes: ["id", "id_browser", "id_type", "id_category"],
       }).then((extension) => {
         if (!extension) {
-          return res.status(200).send({ 
+          return res.status(200).send({
             user_id: user.id,
             email: user.email,
             accessToken: token,
             service: null,
-            services_customers: null, 
+            services_customers: null,
             createdAt: user.createdAt,
-            message: "Extension not found." });
+            message: "Extension not found."
+          });
         }
         //lisst
         Service.findAll({
           where: {
-            id: extension.id,
+            id_extension: extension.id,
           },
           attributes: ["id"],
         })
           .then((aryId) => {
-
-
+            let aryIds = []
+            aryId.forEach(idResult => {
+              // console.log("LOG:",idResult.id)
+              aryIds.push(idResult.id)
+            });
             ServicesCustomers.findOne({
               where: {
-                id_user: user.id,
-                as: 'Service',
+                id_users: user.id,
                 id_service: {
-                  [Op.in]: aryId,
+                  [Op.in]: aryIds,
                 },
               },
               include: [
                 {
                   model: Service,
                   attributes: ["name", "description", "price", "time"],
+                  as: 'id_servi',
                 },
               ],
             })
@@ -88,34 +92,39 @@ exports.signinExtensions = (req, res) => {
                     .status(404)
                     .send({ message: "No service found for this user." });
                 }
-
-                // Gửi kết quả về client
-                res.status(200).send({
-                  success: true,
-                  id: user.id,
-                  email: email,
-                  createdAt: user.createAt,
-                  app_name: app_name,
-                  accessToken: token,
-                  id_browser: extension.id_browser,
-                  id_type: extension.id_type,
-                  id_category: extension.id_category,
-                  services: [
-                    {
-                      name: serviceCustomer.Service.name,
-                      description: serviceCustomer.Service.description,
-                      price: serviceCustomer.Service.price,
-                      time: serviceCustomer.Service.time,
-                    }
-                  ],
-                  services_customers: {
-                    id_user: serviceCustomer.id_user,
-                    register_date: serviceCustomer.register_date,
-                    expiration_date: serviceCustomer.expiration_date,
+                Service.findOne({
+                  where: {
+                    id: serviceCustomer.id_service
                   }
-                });
+                }).then(result => {
+                  // Gửi kết quả về client
+                  res.status(200).send({
+                    success: true,
+                    id: user.id,
+                    email: email,
+                    createdAt: user.createAt,
+                    app_name: app_name,
+                    accessToken: token,
+                    id_browser: extension.id_browser,
+                    id_type: extension.id_type,
+                    id_category: extension.id_category,
+                    services: {
+                      name: result.name,
+                      description: result.description,
+                      price: result.price,
+                      time: result.time,
+                    },
+                    services_customers: {
+                      id_user: serviceCustomer.id_user,
+                      register_date: serviceCustomer.register_date,
+                      expiration_date: serviceCustomer.expiration_date,
+                    }
+                  });
+                })
+
               })
               .catch((err) => {
+                console.log('----------------------')
                 res.status(500).send({ message: err.message });
               });
           })

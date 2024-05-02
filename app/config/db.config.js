@@ -1,5 +1,5 @@
 module.exports = {
-  HOST: "localhost",
+  HOST: "14.225.207.142",
   USER: "onewise_root",
   PASSWORD: "vorJjfjTi8SGvhk8LSlg",
   DB: "socical",
