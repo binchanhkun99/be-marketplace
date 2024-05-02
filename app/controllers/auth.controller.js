@@ -118,7 +118,8 @@ exports.signinExtensions = (req, res) => {
                       id_user: serviceCustomer.id_users,
                       register_date: serviceCustomer.register_date,
                       expiration_date: serviceCustomer.expiration_date,
-                    }
+                    },
+                    createdAt: user.createdAt
                   });
                 })
 
