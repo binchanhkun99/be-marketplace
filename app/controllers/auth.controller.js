@@ -115,7 +115,7 @@ exports.signinExtensions = (req, res) => {
                       time: result.time,
                     },
                     services_customers: {
-                      id_user: serviceCustomer.id_user,
+                      id_user: serviceCustomer.id_users,
                       register_date: serviceCustomer.register_date,
                       expiration_date: serviceCustomer.expiration_date,
                     }
