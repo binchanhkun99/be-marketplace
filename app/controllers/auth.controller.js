@@ -70,6 +70,7 @@ exports.signinExtensions = (req, res) => {
             ServicesCustomers.findOne({
               where: {
                 id_user: user.id,
+                as: 'Service',
                 id_service: {
                   [Op.in]: aryId,
                 },
