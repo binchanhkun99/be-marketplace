@@ -9,7 +9,7 @@ const Service = db.Service;
 
 Service.belongsTo( Extensions, { foreignKey: "id_extensions", as: "extensions" });
 ServicesCustomers.belongsTo(Service, {
-  foreignKey: "id_services",
+  foreignKey: "id_service",
   as: "services",
 });
 
