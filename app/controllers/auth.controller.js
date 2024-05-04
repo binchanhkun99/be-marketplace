@@ -102,7 +102,7 @@ exports.signinExtensions = (req, res) => {
                     success: true,
                     id: user.id,
                     email: email,
-                    createdAt: user.createAt,
+                    createdAt: user.createdAt,
                     app_name: app_name,
                     accessToken: token,
                     id_browser: extension.id_browser,
