@@ -119,7 +119,6 @@ exports.signinExtensions = (req, res) => {
                       register_date: serviceCustomer.register_date,
                       expiration_date: serviceCustomer.expiration_date,
                     },
-                    createdAt: user.createdAt
                   });
                 })
 
@@ -254,6 +253,7 @@ exports.signinUser = (req, res) => {
         email: user.email,
         app_name: user.app_name || "|",
         accessToken: token,
+        cretedAt: user.createdAt
       });
     })
     .catch((err) => {
