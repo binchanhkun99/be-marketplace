@@ -3,7 +3,10 @@ const config = require("../config/auth.config");;
 const _ = require("lodash");
 const nodemailer = require("nodemailer");
 const User = db.user;
+const newUser = db.NewUsers
 const urlApp = db.url_app;
+const Extensions = db.Extensions;
+
 const Order = db.order_history
 const Service = db.Service
 
@@ -13,24 +16,34 @@ const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+Service.belongsTo(Extensions, { foreignKey: "id_extension", as: "extensions" });
 
 exports.getUserAndService = async (req, res) =>{
   try {
   const email = req.body.data[0].email
   const nameService = req.body.data[0].id
-  const dataUser = await User.findOne({
+  const id_extension =  req.body.data[0].id_extension
+  const dataUser = await newUser.findOne({
     where:{
       email: email
     }
   })
   const dataService = await Service.findOne({
     where:{
-      name: nameService
-    }
+      name: nameService,
+      id_extension: id_extension
+    }, 
+    include: [
+      {
+        model: Extensions,
+        attributes: ["title"],
+        as: 'id_ext',
+      }
+    ]
   })
   const filteredResults = {
     price: dataService.price,
-    nameExt: dataUser.type
+    nameExt: dataUser.title
   }
   
   res.status(200).json({ success: true, filteredResults });

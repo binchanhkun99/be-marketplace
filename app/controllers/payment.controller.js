@@ -2,7 +2,9 @@ require("dotenv").config();
 const db = require("../../app/models");
 const Service = db.Service;
 const User = db.user;
+const NewUser = db.NewUsers
 const ServiceForUser = db.ServiceForUser;
+const serviceCustomer = db.SerCus
 const moment = require("moment");
 const sequelize = db.sequelize;
 
@@ -33,15 +35,15 @@ const generateAccessToken = async () => {
     console.error("Failed to generate Access Token:", error);
   }
 };
+Service.belongsTo(Extensions, { foreignKey: "id_extension", as: "extensions" });
+
 const createOrder = async (data) => {
   // use the cart information passed from the front-end to calculate the purchase unit details
-  console.log(
-    "shopping cart information passed from the frontend createOrder() callback:",
-    data[0]
-  );
+
   const getService = await Service.findOne({
     where: {
       name: data[0].id,
+      id_extension: id_extension
     },
   });
 
@@ -145,44 +147,43 @@ exports.Capture = async (req, res) => {
     //
     if (getAllService) {
       if (jsonResponse.status === "COMPLETED") {
-        const checkUser = await User.findOne({
+        const checkUser = await NewUser.findOne({
           where: {
             email: data.email,
           },
         });
 
         const idUser = checkUser.dataValues.id;
-        const checkExits = await ServiceForUser.findOne({
+        const checkExits = await serviceCustomer.findOne({
           where: {
-            user_id: idUser,
+            id_users: idUser,
           },
         });
         if (checkExits) {
-          const previousServiceForUser = await ServiceForUser.findOne({
+          const previousServiceForUser = await serviceCustomer.findOne({
             where: {
-              user_id: idUser,
+              id_users: idUser,
             },
           });
-          const PSFU = previousServiceForUser.dataValues.expiry_date;
+          const PSFU = previousServiceForUser.dataValues.expiration_date;
 
           const previousExpiryDate = moment(PSFU);
           const newExpiryDate = previousExpiryDate
             .add(packageDuration, "days")
             .toDate();
-          await ServiceForUser.update(
+          await serviceCustomer.update(
             {
-              expiry_date: newExpiryDate,
-              name_service: data.id,
+              expiration_date: newExpiryDate,
             },
             {
               where: {
-                user_id: idUser,
+                id_users: idUser,
               },
             }
           );
           return res.status(200).json({ success: true, message:"Payment Success" });
         } else {
-          const checkUser = await User.findOne({
+          const checkUser = await NewUser.findOne({
             where: {
               email: data.email,
             },
@@ -191,14 +192,13 @@ exports.Capture = async (req, res) => {
           const nameService = getAllService.dataValues.name;
           const idUser = checkUser.dataValues.id;
 
-          await ServiceForUser.create({
-            user_id: idUser,
-            service_id: idService,
-            name_service: nameService,
-            expiry_date: expiryDate,
-            status: 1,
+          await serviceCustomer.create({
+            id_users: idUser,
+            id_service: idService,
+            
+            expiration_date: expiryDate,
           });
-          await User.update(
+          await NewUser.update(
             {
               status: "2",
             },
