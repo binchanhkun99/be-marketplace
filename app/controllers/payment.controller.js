@@ -189,7 +189,7 @@ exports.Capture = async (req, res) => {
             },
           });
 
-          const nameService = getAllService.dataValues.name;
+          // const nameService = getAllService.dataValues.name;
           const idUser = checkUser.dataValues.id;
 
           await serviceCustomer.create({
