@@ -35,7 +35,7 @@ const generateAccessToken = async () => {
     console.error("Failed to generate Access Token:", error);
   }
 };
-Service.belongsTo(Extensions, { foreignKey: "id_extension", as: "anotherAlias" });
+// Service.belongsTo(Extensions, { foreignKey: "id_extension", as: "anotherAlias" });
 
 const createOrder = async (data) => {
   // use the cart information passed from the front-end to calculate the purchase unit details
