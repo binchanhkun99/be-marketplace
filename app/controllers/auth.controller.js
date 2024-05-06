@@ -7,7 +7,8 @@ const ServicesCustomers = db.SerCus;
 const Extensions = db.Extensions;
 const Service = db.Service;
 
-Service.belongsTo(Extensions, { foreignKey: "id_extension", as: "extensions" });
+// Service.belongsTo(Extensions, { foreignKey: "id_extension", as: "extensions" });
+
 ServicesCustomers.belongsTo(Service, {
   foreignKey: "id_service",
   as: "services",
@@ -82,7 +83,7 @@ exports.signinExtensions = (req, res) => {
                 {
                   model: Service,
                   attributes: ["name", "description", "price", "time"],
-                  as: 'id_servi',
+                  as: 'services',
                 },
               ],
             })

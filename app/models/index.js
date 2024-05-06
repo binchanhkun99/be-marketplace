@@ -36,7 +36,11 @@ db.Category = require("../models/category.model.js")(sequelize, Sequelize)
 db.Types = require("../models/types.model.js")(sequelize, Sequelize)
 db.PayHis = require("../models/pay_history.model.js")(sequelize, Sequelize)
 db.Browser = require("../models/browsers.model.js")(sequelize, Sequelize)
-
+// // Xóa cache của mô hình
+// db.Extensions.clearCache();
+// db.Service.clearCache();
+// Xóa cache của sequelize instance
+// sequelize.clearCache();
 // db.role.belongsToMany(db.user, {
 //   through: "user_roles",
 //   foreignKey: "roleId",
