@@ -91,7 +91,13 @@ exports.signinExtensions = (req, res) => {
                 if (!serviceCustomer) {
                   return res
                     .status(404)
-                    .send({ message: "No service found for this user." });
+                    .send({
+                      user_id: user.id,
+                      email: user.email,
+                      accessToken: token,
+                      service: null,
+                      services_customers: null,
+                      createdAt: user.createdAt, message: "No service found for this user." });
                 }
                 Service.findOne({
                   where: {
