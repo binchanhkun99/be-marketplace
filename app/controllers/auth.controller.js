@@ -90,7 +90,7 @@ exports.signinExtensions = (req, res) => {
               .then((serviceCustomer) => {
                 if (!serviceCustomer) {
                   return res
-                    .status(404)
+                    .status(200)
                     .send({
                       user_id: user.id,
                       email: user.email,
