@@ -43,7 +43,7 @@ const createOrder = async (data) => {
   const getService = await Service.findOne({
     where: {
       name: data[0].id,
-      id_extension: id_extension
+      id_extension: data[0].id_extension
     },
   });
 
