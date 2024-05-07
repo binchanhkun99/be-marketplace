@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { where } = require("sequelize");
 const db = require("../../app/models");
 const Service = db.Service;
 const User = db.user;
@@ -39,11 +40,16 @@ const generateAccessToken = async () => {
 
 const createOrder = async (data) => {
   // use the cart information passed from the front-end to calculate the purchase unit details
-
+const getIDExtension = await Extensions.findOne({
+  where:{
+    app_name: data[0].app_name
+  }
+});
+const IDEx = getIDExtension.dataValues.id
   const getService = await Service.findOne({
     where: {
       name: data[0].id,
-      id_extension: data[0].id_extension
+      id_extension: IDEx
     },
   });
 
