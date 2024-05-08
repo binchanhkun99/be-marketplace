@@ -8,7 +8,7 @@ const ServiceForUser = db.ServiceForUser;
 const serviceCustomer = db.SerCus
 const moment = require("moment");
 const sequelize = db.sequelize;
-
+const Extensions = db.Extensions
 const base = "https://api-m.paypal.com"; //Product
 // const base = "https://api-m.sandbox.paypal.com"; //Sandbox
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;

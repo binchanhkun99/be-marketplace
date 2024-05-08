@@ -22,33 +22,37 @@ exports.getUserAndService = async (req, res) =>{
   try {
   const email = req.body.data[0].email
   const nameService = req.body.data[0].id
-  const id_extension =  req.body.data[0].id_extension
+  const app_name =  req.body.data[0].app_name
+  console.log("Đã vào đây");
   const dataUser = await newUser.findOne({
     where:{
       email: email
     }
   })
-  const dataService = await Service.findOne({
+  const dataExt = await Extensions.findOne({
     where:{
-      name: nameService,
-      id_extension: id_extension
-    }, 
-    include: [
-      {
-        model: Extensions,
-        attributes: ["title"],
-        as: 'id_ext',
-      }
-    ]
+      app_name: app_name
+    }
   })
+console.log("Name Service___________",  nameService );
+const idExt = dataExt.dataValues.id
+  const dataService = await Service.findAll({
+    where:{
+      id_extension: idExt,
+      name: nameService
+    }, 
+  })
+  // console.log("LIST ID_____________________", );
+  const Price = dataService[0].dataValues.price
   const filteredResults = {
-    price: dataService.price,
-    nameExt: dataUser.title
+    price: Price,
+    nameExt: dataExt.title
   }
   
   res.status(200).json({ success: true, filteredResults });
   } catch (error) {
-    res.status(500).send({ success: false });
+console.log(error);
+    res.status(500).send({ success: false, error: error });
   }
   
 }     

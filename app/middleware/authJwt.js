@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../../app/config/auth.config");
 const db = require("../../app/models");
 const User = db.user;
+const NewUser = db.NewUsers
 
 
 verifyToken = (req, res, next) => {
@@ -34,13 +35,23 @@ checkUser = async (req, res, next) =>{
     const {email, access_token} = req.body.data[0]
     // const email = req.body.data.email
     // const access_token = req.body.data.access_token
+  
     
-    const user = await User.findOne({
+  jwt.verify(access_token, config.secret, (err, decoded) => {
+   
+    if (err) {
+      return res.status(401).send({
+        message: "Unauthorized!"
+      });
+    }
+  });
+    const user = await NewUser.findOne({
       where: {
-        email: email,
-        access_token: access_token
+        email: email
+      
       }
     });
+
     if (user) {
       // Nếu tìm thấy user, gửi phản hồi với thông báo thành công
       // return res.status(200).json({ success: true, message: "User exists" });
